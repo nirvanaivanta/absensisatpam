@@ -1,12 +1,42 @@
+<?php
+// Koneksi ke MySQL
+$servername = "localhost";
+$username = "root"; 
+$password = ""; 
+$dbname = "satpam"; 
+
+// koneksi
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $noPegawai = $_POST['noPegawai'];
+    $nama = $_POST['nama'];
+    $shift = $_POST['shift'];
+    $gender = $_POST['gender'];
+
+    $sql = "INSERT INTO absensi (noPegawai, nama, shift, gender)
+            VALUES ('$noPegawai', '$nama', '$shift', '$gender')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('Data absensi berhasil disimpan.');</script>";
+    } else {
+        echo "<script>alert('Error: " . $sql . "<br>" . $conn->error . "');</script>";
+    }
+}
+
+$sql = "SELECT * FROM absensi";
+$result = $conn->query($sql);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Form Absensi</title>
     <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-gray-900 font-sans text-gray-200">
+</head>
+<body class="bg-gray-900 font-sans text-gray-200">
 
     <!-- Container -->
     <div class="container mx-auto p-6 max-w-4xl">
@@ -15,7 +45,7 @@
       <h1 class="text-4xl font-extrabold text-center text-blue-400 mb-6">Form Absensi</h1>
 
       <!-- Form -->
-      <form id="absensiForm" class="space-y-6 bg-gray-800 p-6 rounded-lg shadow-lg">
+      <form id="absensiForm" action="absen.php" method="POST" class="space-y-6 bg-gray-800 p-6 rounded-lg shadow-lg">
         <div class="space-y-4">
           <div>
             <label for="noPegawai" class="block text-sm font-medium text-blue-500">Nomor Pegawai</label>
@@ -91,7 +121,23 @@
               <th class="px-6 py-3 bg-gray-700 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Gender</th>
             </tr>
           </thead>
-          <tbody id="tbody" class="divide-y divide-gray-700"></tbody>
+          <tbody class="divide-y divide-gray-700">
+            <?php
+            if ($result->num_rows > 0) {
+                // Tampilkan data absensi
+                while($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                            <td class='px-6 py-4 whitespace-nowrap'>" . $row['noPegawai'] . "</td>
+                            <td class='px-6 py-4 whitespace-nowrap'>" . $row['nama'] . "</td>
+                            <td class='px-6 py-4 whitespace-nowrap'>" . $row['shift'] . "</td>
+                            <td class='px-6 py-4 whitespace-nowrap'>" . $row['gender'] . "</td>
+                          </tr>";
+                }
+            } else {
+                echo "<tr><td colspan='4' class='px-6 py-4 text-center'>Tidak ada data absensi</td></tr>";
+            }
+            ?>
+          </tbody>
         </table>
       </div>
 
@@ -107,45 +153,10 @@
 
     </div>
 
-    <script>
-      const form = document.getElementById("absensiForm");
-      const tbody = document.getElementById("tbody");
+    <?php
+    // Tutup koneksi
+    $conn->close();
+    ?>
 
-      // Array untuk menyimpan data absensi
-      let dataAbsensi = [];
-
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        // Ambil data dari form
-        const noPegawai = document.getElementById("noPegawai").value;
-        const nama = document.getElementById("nama").value;
-        const shift = document.getElementById("shift").value;
-        const gender = document.getElementById("gender").value;
-
-        //  objek data absensi
-        const newAbsensi = { noPegawai, nama, shift, gender };
-
-        // Tambah data ke array dan tabel
-        dataAbsensi.push(newAbsensi);
-        const row = createTableRow(newAbsensi);
-        tbody.appendChild(row);
-
-        // Kosongkan form
-        form.reset();
-      });
-
-      // Fungsi untuk membuat baris tabel
-      function createTableRow(data) {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td class="px-6 py-4 whitespace-nowrap">${data.noPegawai}</td>
-          <td class="px-6 py-4 whitespace-nowrap">${data.nama}</td>
-          <td class="px-6 py-4 whitespace-nowrap">${data.shift}</td>
-          <td class="px-6 py-4 whitespace-nowrap">${data.gender}</td>
-        `;
-        return row;
-      }
-    </script>
-  </body>
+</body>
 </html>
