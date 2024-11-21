@@ -1,3 +1,19 @@
+<?php 
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "satpam";
+
+//konek
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+$sql = "SELECT * FROM profil";
+$result = $conn->query($sql);
+
+$data = $result->fetch_assoc();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -20,20 +36,28 @@
         </div>
         
         <!-- Name and Info -->
-        <h2 class="text-3xl font-semibold text-center text-blue-400">John Doe</h2>
+        <h2 class="text-3xl font-semibold text-center text-blue-400">
+        <?= $data ? htmlspecialchars($data['nama']) : 'Tidak Ada Data'; ?>
+        </h2>
         
         <div class="space-y-4">
           <div class="flex justify-between text-sm">
-            <p class="font-medium">Nama:</p>
-            <p>John Doe</p>
+            <p class="font-medium">Nama :</p>
+            <p>
+            <?= $data ? htmlspecialchars($data['nama']) : 'Tidak Ada Data'; ?>
+            </p>
           </div>
           <div class="flex justify-between text-sm">
-            <p class="font-medium">Nomor HP:</p>
-            <p>081234567890</p>
+            <p class="font-medium">Nomor HP :</p>
+            <p>
+            <?= $data ? htmlspecialchars($data['no_hp']) : 'Tidak Ada Data'; ?>
+            </p>
           </div>
           <div class="flex justify-between text-sm">
-            <p class="font-medium">Gender:</p>
-            <p>Laki-laki</p>
+            <p class="font-medium">Gender :</p>
+            <p>
+            <?= $data ? htmlspecialchars($data['gender']) : 'Tidak Ada Data'; ?>
+            </p>
           </div>
         </div>
         

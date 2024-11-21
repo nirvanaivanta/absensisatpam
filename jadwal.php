@@ -1,11 +1,11 @@
 <?php
-// Koneksi ke database MySQL menggunakan PHP
-$servername = "localhost"; // atau bisa gunakan IP server
-$username = "root"; // username default untuk Laragon
-$password = ""; // password kosong untuk Laragon
-$dbname = "satpam"; // nama database yang sudah dibuat
 
-// Buat koneksi
+$servername = "localhost"; 
+$username = "root";
+$password = ""; 
+$dbname = "satpam"; 
+
+// koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Periksa koneksi
